@@ -1,0 +1,61 @@
+server:
+  port: 9200
+
+spring:
+  application:
+    name: consumer
+  sleuth:
+    sampler:
+      rate: 1
+  cloud:
+    # 配置中心
+    config:
+      uri:
+        - http://127.0.0.1:9400/
+#      discovery:
+#        enabled: true
+#        service-id: config
+      label: master
+      profile: dev
+
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 60
+    hostname: 127.0.0.1
+  client:
+    registry-fetch-interval-seconds: 5
+    service-url:
+      defaultZone: http://ek1.com:9001/eureka,http://ek2.com:9002/eureka
+
+provider:
+  ribbon:
+    # yml配置的负载均衡策略
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
+
+ribbon:
+  # 连接超时时间
+  ConnectTime: 1000
+  # 业务逻辑超时时间
+  ReadTimeout: 2000
+  # 同一台实例最大重试次数，不包括首次调用
+  MaxAutoRetries: 0
+  # 其它实例最大重试次数，不包括首次调用
+  # 总共的调用次数为 (MaxAutoRetries + 1) * (MaxAutoRetriesNextServer + 1)
+  MaxAutoRetriesNextServer: 3
+  # 是否所有操作都重试
+  OkToRetryOnAllOperations: false
+
+feign:
+  hystrix:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+hystrix:
+  dashboard:
+    proxy-stream-allow-list: "*"

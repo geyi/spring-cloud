@@ -1,0 +1,16 @@
+server:
+  port: 9001
+
+eureka:
+  instance:
+    # 单机集群时需要配置不同的主机名
+    hostname: ek1.com
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://ek2.com:9002/eureka/
+
+spring:
+  application:
+    name: EurekaServer

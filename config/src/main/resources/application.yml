@@ -1,0 +1,22 @@
+server:
+  port: 9400
+
+spring:
+  application:
+    name: config
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/geyi/hello-world.git
+      label: master
+
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 60
+    hostname: 127.0.0.1
+  client:
+    registry-fetch-interval-seconds: 5
+    service-url:
+      defaultZone: http://ek1.com:9001/eureka,http://ek2.com:9002/eureka

@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: provider
+  sleuth:
+    sampler:
+      rate: 1
+
+eureka:
+  instance:
+    # 续约发送间隔，默认30秒
+    lease-renewal-interval-in-seconds: 5
+    # 续约到期时间
+    lease-expiration-duration-in-seconds: 60
+    hostname: 127.0.0.1
+  client:
+    # 表示eureka client间隔多久去拉取服务注册信息，默认30秒
+    registry-fetch-interval-seconds: 5
+    service-url:
+      defaultZone: http://ek1.com:9001/eureka,http://ek2.com:9002/eureka
+    healthcheck:
+      # 允许上报服务的健康状态
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # 暴露所有监控端点
+        include: "*"
+  endpoint:
+    shutdown:
+      # 允许通过请求actuator/shutdown远程关闭服务节点
+      enabled: true
