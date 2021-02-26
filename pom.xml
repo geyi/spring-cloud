@@ -11,6 +11,7 @@
         <module>sdk</module>
         <module>zuul</module>
         <module>config</module>
+        <module>gateway</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
