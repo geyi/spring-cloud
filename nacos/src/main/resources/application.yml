@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: nacos
+  cloud:
+    nacos:
+      discovery:
+        server-addr: http://nacos.kuaidi100.com
+
+server:
+  port: 8081
