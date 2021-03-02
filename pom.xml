@@ -12,6 +12,7 @@
         <module>zuul</module>
         <module>config</module>
         <module>nacos</module>
+        <module>gateway</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
