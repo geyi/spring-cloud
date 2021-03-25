@@ -4,7 +4,7 @@ import com.airing.spring.cloud.consumer.facade.UserConsumerApi;
 import com.airing.spring.cloud.sdk.entity.User;
 import org.springframework.stereotype.Component;
 
-@Component
+// @Component
 public class UserConsumerApiFallback implements UserConsumerApi {
     @Override
     public User getUserInfo(Long id) {
