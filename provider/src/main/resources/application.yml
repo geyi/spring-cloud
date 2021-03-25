@@ -4,6 +4,8 @@ spring:
   sleuth:
     sampler:
       rate: 1
+  messages:
+    basename: i18n.language
 
 eureka:
   instance:
