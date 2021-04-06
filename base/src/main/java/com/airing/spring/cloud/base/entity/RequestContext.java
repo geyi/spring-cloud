@@ -1,18 +1,23 @@
-package com.airing.spring.cloud.provider.config.interceptor;
+package com.airing.spring.cloud.base.entity;
 
+/**
+ * 请求上下文
+ *
+ * @author GEYI
+ * @date 2021年03月31日 9:28
+ */
 public class RequestContext {
 
     private RequestContext() {}
 
     private String token;
     private Long userId;
+    private String tra;
+    private String platform;
     private String ip;
     private Long startTime;
-    private String address;
-    private String platform;
+    private String lang;
     private String appId;
-    private String versionCode;
-    private String source;
 
     public String getToken() {
         return token;
@@ -28,6 +33,22 @@ public class RequestContext {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getTra() {
+        return tra;
+    }
+
+    public void setTra(String tra) {
+        this.tra = tra;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     public String getIp() {
@@ -46,20 +67,12 @@ public class RequestContext {
         this.startTime = startTime;
     }
 
-    public String getAddress() {
-        return address;
+    public String getLang() {
+        return lang;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     public String getAppId() {
@@ -68,22 +81,6 @@ public class RequestContext {
 
     public void setAppId(String appId) {
         this.appId = appId;
-    }
-
-    public String getVersionCode() {
-        return versionCode;
-    }
-
-    public void setVersionCode(String versionCode) {
-        this.versionCode = versionCode;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
     }
 
     private final static ThreadLocal<RequestContext> LOCAL = ThreadLocal.withInitial(() -> new RequestContext());

@@ -1,14 +1,21 @@
 package com.airing.spring.cloud.consumer.controller;
 
+import com.airing.spring.cloud.base.annotation.Auth;
+import com.airing.spring.cloud.base.annotation.Sign;
+import com.airing.spring.cloud.base.enums.ExceptionEnum;
+import com.airing.spring.cloud.base.exception.BusinessException;
 import com.netflix.discovery.EurekaClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -56,6 +63,26 @@ public class TestController {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
         return result;
+    }
+
+    @RequestMapping("test")
+    @Sign
+    private Object test(/*@RequestBody String body,*/
+                        @RequestParam(required = false) String number) {
+        System.out.println(number);
+        return "";
+    }
+
+
+
+    @GetMapping("/i18n")
+    public Object i18n(String key) {
+        try {
+            System.out.println(1 / 0);
+        } catch (Exception e) {
+            throw new BusinessException(ExceptionEnum.JUJU);
+        }
+        return "";
     }
 
 }

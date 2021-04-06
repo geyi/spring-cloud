@@ -1,7 +1,18 @@
-package com.airing.spring.cloud.provider.enums;
+package com.airing.spring.cloud.base.enums;
 
+/**
+ * 异常枚举类
+ *
+ * @author GEYI
+ * @date 2021年03月31日 9:51
+ */
 public enum ExceptionEnum {
-    SYS_ERROR(500, "sys.error", "Error! Please contact customer service."),
+    SYS_ERROR(5000, "sys.error", "Error! Please contact customer service."),
+
+    PARAM_ERROR(4000, "param.error", "parameter {0} is error!"),
+    SIGN_ERROR(4001, "sign.error", "params sign error!"),
+    AUTH_ERROR(403, "auth.error", "login"),
+
     JUJU(1, "juju", "Error！Error！"),
     ;
 

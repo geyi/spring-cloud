@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConfigController {
 
     // 使用spring cloud config时，配置文件必须命令为bootstrap.yml，否则无法读取到配置
-    @Value("${sms.title.template}")
+    @Value("${sms.title.template:''}")
     private String smsTitleTemplate;
 
     @RequestMapping("")

@@ -10,7 +10,7 @@ import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboar
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.airing.spring.cloud.consumer", "com.airing.spring.cloud.base"})
 @EnableEurekaClient
 @EnableFeignClients
 // RestTemplate整合Hystrix
