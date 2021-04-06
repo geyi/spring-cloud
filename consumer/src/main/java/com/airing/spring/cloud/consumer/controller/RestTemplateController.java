@@ -13,6 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * RestTemplate demo
+ * 通过RestTemplate调用远程接口
+ * RestTemplate + @LoadBalance实现通过服务名调用远程接口
+ * RestTemplate整合Hystrix
+ *
+ * @author GEYI
+ * @date 2021年04月06日 10:13
+ */
 @RestController
 @RequestMapping("rest")
 public class RestTemplateController {

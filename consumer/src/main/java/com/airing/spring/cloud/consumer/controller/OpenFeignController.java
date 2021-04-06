@@ -8,6 +8,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * openfeign demo
+ * 通过openfeign调用远程接口
+ *
+ * @author GEYI
+ * @date 2021年04月06日 10:11
+ */
 @RestController
 @RequestMapping("open/feign")
 public class OpenFeignController {

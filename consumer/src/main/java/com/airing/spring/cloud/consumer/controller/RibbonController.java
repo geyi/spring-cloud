@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Ribbon demo
+ *
+ * @author GEYI
+ * @date 2021年04月06日 10:16
+ */
 @RestController
 @RequestMapping("ribbon")
 public class RibbonController {

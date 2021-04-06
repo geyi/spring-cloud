@@ -5,6 +5,13 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * spring-cloud-config demo
+ * 在运行时刷新配置
+ *
+ * @author GEYI
+ * @date 2021年04月06日 10:03
+ */
 @RestController
 @RequestMapping("config")
 // 支持手动刷新配置
