@@ -12,6 +12,7 @@ public enum ExceptionEnum {
     PARAM_ERROR(4000, "param.error", "parameter {0} is error!"),
     SIGN_ERROR(4001, "sign.error", "params sign error!"),
     AUTH_ERROR(403, "auth.error", "login"),
+    LIMIT_ERROR(4004, "limit.error", "limit"),
 
     JUJU(1, "juju", "Error！Error！"),
     ;

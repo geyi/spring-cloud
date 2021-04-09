@@ -1,8 +1,10 @@
 package com.airing.spring.cloud.base.interceptor;
 
 import com.airing.spring.cloud.base.Constant;
+import com.airing.spring.cloud.base.annotation.AccessLimit;
 import com.airing.spring.cloud.base.annotation.Auth;
 import com.airing.spring.cloud.base.annotation.Sign;
+import com.airing.spring.cloud.base.config.KeyResolver;
 import com.airing.spring.cloud.base.entity.RequestContext;
 import com.airing.spring.cloud.base.enums.ExceptionEnum;
 import com.airing.spring.cloud.base.exception.BusinessException;
@@ -11,6 +13,7 @@ import com.airing.spring.cloud.base.utils.IPUtils;
 import com.airing.spring.cloud.base.utils.MD5Utils;
 import com.airing.spring.cloud.base.utils.RedissonUtils;
 import com.airing.spring.cloud.base.utils.RequestUtils;
+import com.airing.spring.cloud.base.utils.SpringBeanUtils;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,9 +25,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class RequestInterceptor implements HandlerInterceptor {
+
+    protected static final String REQ_RATE_LIMITER_TOKENS = "REQ_RATE_LIMITER_{%s}_TOKENS";
+    protected static final String REQ_RATE_LIMITER_TIMESTAMP = "REQ_RATE_LIMITER_{%s}_TIMESTAMP";
 
     @Autowired(required = false)
     private RedissonUtils redissonUtils;
@@ -50,6 +57,12 @@ public class RequestInterceptor implements HandlerInterceptor {
 
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
+
+            boolean accessLimit = this.accessLimit(handlerMethod, request);
+            if (!accessLimit) {
+                throw new BusinessException(ExceptionEnum.LIMIT_ERROR);
+            }
+
             boolean sign = this.sign(handlerMethod, request);
             if (!sign) {
                 throw new BusinessException(ExceptionEnum.SIGN_ERROR);
@@ -153,6 +166,62 @@ public class RequestInterceptor implements HandlerInterceptor {
             if (userId == null) {
                 return false;
             }
+        }
+        return true;
+    }
+
+    /**
+     * 限流器
+     *
+     * @param handlerMethod
+     * @param request
+     * @return boolean
+     * @author GEYI
+     * @date 2021年04月09日 15:22
+     */
+    private boolean accessLimit(HandlerMethod handlerMethod, HttpServletRequest request) {
+        AccessLimit accessLimit = handlerMethod.getMethodAnnotation(AccessLimit.class);
+        if (accessLimit != null) {
+            int rate = accessLimit.replenishRate();
+            int capacity = accessLimit.burstCapacity();
+            int now = (int) (System.currentTimeMillis() / 1000);
+            int requested = 1;
+            KeyResolver keyResolver = SpringBeanUtils.getBean(accessLimit.keyResolver());
+            String key = keyResolver.resolve(request);
+            String tokensKey = String.format(REQ_RATE_LIMITER_TOKENS, key);
+            String timestampKey = String.format(REQ_RATE_LIMITER_TIMESTAMP, key);
+            String lastTokensStr = this.redissonUtils.get(tokensKey);
+            int lastTokens;
+            if (lastTokensStr == null || lastTokensStr.length() == 0) {
+                lastTokens = capacity;
+            } else {
+                lastTokens = Integer.parseInt(lastTokensStr);
+            }
+            String lastRefreshedStr = this.redissonUtils.get(timestampKey);
+            int lastRefreshed;
+            if (lastRefreshedStr == null || lastRefreshedStr.length() == 0) {
+                lastRefreshed = 0;
+            } else {
+                lastRefreshed = Integer.parseInt(lastRefreshedStr);
+            }
+//            log.debug("accessLimit|{}|{}|{}|{}|{}", rate, capacity, now, lastTokens, lastRefreshed);
+            int delta = Math.max(0, now - lastRefreshed);
+            int filledTokens = Math.min(capacity, lastTokens + (delta * rate));
+            boolean allowed = filledTokens >= requested;
+            int newTokens = filledTokens;
+            if (allowed) {
+                newTokens = filledTokens - requested;
+            } else {
+//                log.warn("可疑ip|{}", key);
+            }
+
+            int fillTime = capacity / rate;
+            int ttl = fillTime * 2;
+            if (ttl > 0) {
+                this.redissonUtils.set(tokensKey, String.valueOf(newTokens), ttl, TimeUnit.SECONDS);
+                this.redissonUtils.set(timestampKey, String.valueOf(now), ttl, TimeUnit.SECONDS);
+            }
+            return allowed;
         }
         return true;
     }
