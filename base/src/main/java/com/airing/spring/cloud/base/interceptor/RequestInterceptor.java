@@ -27,6 +27,12 @@ import java.util.Enumeration;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 请求拦截器，基于annotation对接口进行限流、鉴权、参数签名校验
+ *
+ * @author GEYI
+ * @date 2021年04月10日 19:09
+ */
 @Component
 public class RequestInterceptor implements HandlerInterceptor {
 

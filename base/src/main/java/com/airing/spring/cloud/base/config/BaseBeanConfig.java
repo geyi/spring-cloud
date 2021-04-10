@@ -4,6 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 
+/**
+ * bean注册
+ *
+ * @author GEYI
+ * @date 2021年04月10日 19:01
+ */
 @Configuration
 public class BaseBeanConfig {
 
