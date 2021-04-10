@@ -1,9 +1,12 @@
 package com.airing.spring.cloud.consumer.controller;
 
+import com.airing.spring.cloud.base.annotation.AccessLimit;
 import com.airing.spring.cloud.base.annotation.Auth;
 import com.airing.spring.cloud.base.annotation.Sign;
 import com.airing.spring.cloud.base.enums.ExceptionEnum;
 import com.airing.spring.cloud.base.exception.BusinessException;
+import com.airing.spring.cloud.base.utils.http.HttpRequestUtils;
+import com.google.common.util.concurrent.RateLimiter;
 import com.netflix.discovery.EurekaClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("test")
@@ -67,22 +72,40 @@ public class TestController {
 
     @RequestMapping("test")
     @Sign
+    @AccessLimit
     private Object test(/*@RequestBody String body,*/
                         @RequestParam(required = false) String number) {
-        System.out.println(number);
-        return "";
+//        System.out.println(number);
+        return "success";
     }
-
-
 
     @GetMapping("/i18n")
     public Object i18n(String key) {
-        try {
+        /*try {
             System.out.println(1 / 0);
         } catch (Exception e) {
             throw new BusinessException(ExceptionEnum.JUJU);
+        }*/
+        RateLimiter rateLimiter = RateLimiter.create(10.0);
+        for (int i = 0; i < 30; i++) {
+            rateLimiter.acquire();
+            new Thread(() -> {
+                String respStr = HttpRequestUtils.get("http://localhost:9200/test/test");
+                System.out.println((System.currentTimeMillis() / 1000) + respStr);
+            }).start();
         }
         return "";
+    }
+
+    public static void main(String[] args) {
+        RateLimiter rateLimiter = RateLimiter.create(3.0);
+        while (true) {
+            rateLimiter.acquire();
+            new Thread(() -> {
+                String respStr = HttpRequestUtils.get("http://localhost:9200/test/test");
+                System.out.println(respStr);
+            }).start();
+        }
     }
 
 }

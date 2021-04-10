@@ -17,6 +17,9 @@ spring:
 #        service-id: config
       label: master
       profile: dev
+  redis:
+    redisson:
+      config: classpath:redisson.yaml
 
 eureka:
   instance:
@@ -59,3 +62,7 @@ management:
 hystrix:
   dashboard:
     proxy-stream-allow-list: "*"
+    
+logging:
+  level:
+    org.apache: info

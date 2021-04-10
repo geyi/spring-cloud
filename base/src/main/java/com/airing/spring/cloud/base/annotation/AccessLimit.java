@@ -9,6 +9,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**    
+ * 接口限流器
+ * 参考spring-cloud-gateway-server.jar中scripts/request_rate_limiter.lua的实现
+ *
+ * @author GEYI
+ * @date 2021年04月10日 10:17
+ */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

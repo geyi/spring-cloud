@@ -181,7 +181,7 @@ public class RequestInterceptor implements HandlerInterceptor {
      */
     private boolean accessLimit(HandlerMethod handlerMethod, HttpServletRequest request) {
         AccessLimit accessLimit = handlerMethod.getMethodAnnotation(AccessLimit.class);
-        if (accessLimit != null) {
+        if (accessLimit != null && redissonUtils != null) {
             int rate = accessLimit.replenishRate();
             int capacity = accessLimit.burstCapacity();
             int now = (int) (System.currentTimeMillis() / 1000);
@@ -205,6 +205,7 @@ public class RequestInterceptor implements HandlerInterceptor {
                 lastRefreshed = Integer.parseInt(lastRefreshedStr);
             }
 //            log.debug("accessLimit|{}|{}|{}|{}|{}", rate, capacity, now, lastTokens, lastRefreshed);
+            System.out.println("accessLimit|" + rate + "|" + capacity + "|" + now + "|" + lastTokens + "|" + lastRefreshed);
             int delta = Math.max(0, now - lastRefreshed);
             int filledTokens = Math.min(capacity, lastTokens + (delta * rate));
             boolean allowed = filledTokens >= requested;
