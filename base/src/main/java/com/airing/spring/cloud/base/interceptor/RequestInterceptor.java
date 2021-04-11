@@ -15,6 +15,8 @@ import com.airing.spring.cloud.base.utils.RedissonUtils;
 import com.airing.spring.cloud.base.utils.RequestUtils;
 import com.airing.spring.cloud.base.utils.SpringBeanUtils;
 import org.redisson.client.codec.StringCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -35,6 +37,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class RequestInterceptor implements HandlerInterceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(RequestInterceptor.class);
 
     protected static final String REQ_RATE_LIMITER_TOKENS = "REQ_RATE_LIMITER_{%s}_TOKENS";
     protected static final String REQ_RATE_LIMITER_TIMESTAMP = "REQ_RATE_LIMITER_{%s}_TIMESTAMP";
@@ -92,8 +96,8 @@ public class RequestInterceptor implements HandlerInterceptor {
                                 Exception ex) throws Exception {
         if (handler instanceof HandlerMethod) {
             HandlerMethod method = (HandlerMethod) handler;
-//            log.info("{} RT:{}ms", method.getMethod().getName(),
-//                    (System.currentTimeMillis() - RequestContext.getContext().getStartTime()));
+            log.info("{} RT:{}ms", method.getMethod().getName(),
+                    (System.currentTimeMillis() - RequestContext.getContext().getStartTime()));
             RequestContext.removeContext();
         }
     }
@@ -124,7 +128,7 @@ public class RequestInterceptor implements HandlerInterceptor {
                     RequestWrapper requestWrapper = (RequestWrapper) request;
                     String bodyStr = requestWrapper.getBodyString();
                     // raw（参数放在请求体内）
-//                    log.debug("请求体参数|{}", bodyStr);
+                    log.debug("请求体参数|{}", bodyStr);
                     // put参与签名的请求体
                     signMap.put("body", bodyStr);
 
@@ -210,8 +214,13 @@ public class RequestInterceptor implements HandlerInterceptor {
             } else {
                 lastRefreshed = Integer.parseInt(lastRefreshedStr);
             }
-//            log.debug("accessLimit|{}|{}|{}|{}|{}", rate, capacity, now, lastTokens, lastRefreshed);
-            System.out.println("accessLimit|" + rate + "|" + capacity + "|" + now + "|" + lastTokens + "|" + lastRefreshed);
+            log.debug("accessLimit|{}|{}|{}|{}|{}", rate, capacity, now, lastTokens, lastRefreshed);
+            /*try {
+                // 睡眠之后存在并发问题
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
             int delta = Math.max(0, now - lastRefreshed);
             int filledTokens = Math.min(capacity, lastTokens + (delta * rate));
             boolean allowed = filledTokens >= requested;
@@ -219,11 +228,11 @@ public class RequestInterceptor implements HandlerInterceptor {
             if (allowed) {
                 newTokens = filledTokens - requested;
             } else {
-//                log.warn("可疑ip|{}", key);
+                log.warn("可疑ip|{}", key);
             }
 
             int fillTime = capacity / rate;
-            int ttl = fillTime * 2;
+            int ttl = fillTime << 1;
             if (ttl > 0) {
                 this.redissonUtils.set(tokensKey, String.valueOf(newTokens), ttl, TimeUnit.SECONDS);
                 this.redissonUtils.set(timestampKey, String.valueOf(now), ttl, TimeUnit.SECONDS);

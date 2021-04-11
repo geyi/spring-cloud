@@ -64,5 +64,4 @@ hystrix:
     proxy-stream-allow-list: "*"
     
 logging:
-  level:
-    org.apache: info
+  config: classpath:log4j2.xml
