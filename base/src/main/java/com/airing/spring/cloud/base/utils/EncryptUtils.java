@@ -1,9 +1,15 @@
 package com.airing.spring.cloud.base.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class EncryptUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(EncryptUtils.class);
+
     /**
      * 将加密后的字节数组转换成十六进制字符串
      *
@@ -38,7 +44,7 @@ public class EncryptUtils {
             byte[] bytes = sha256_HMAC.doFinal(message.getBytes());
             hash = byteArrayToHexString(bytes);
         } catch (Exception e) {
-//            log.error("encrypt|ERROR", e);
+            log.error("encrypt|ERROR", e);
         }
         return hash;
     }

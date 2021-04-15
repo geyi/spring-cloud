@@ -4,6 +4,8 @@ import com.airing.spring.cloud.base.entity.ResponseData;
 import com.airing.spring.cloud.base.enums.ExceptionEnum;
 import com.airing.spring.cloud.base.exception.BusinessException;
 import com.airing.spring.cloud.base.utils.MessageSourceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestControllerAdvice
 public class BusinessExceptionHandler {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private MessageSourceUtils messageSourceUtils;
@@ -37,6 +41,7 @@ public class BusinessExceptionHandler {
             }
             response = new ResponseData<>(be.getCode(), msg);
         } else { // 系统异常
+            log.debug("sys error|", e);
             response = new ResponseData<>(ExceptionEnum.SYS_ERROR.getCode(), ExceptionEnum.SYS_ERROR.getMsg());
         }
         return response;

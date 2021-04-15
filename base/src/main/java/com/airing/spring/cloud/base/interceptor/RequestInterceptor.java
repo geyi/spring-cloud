@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RequestInterceptor implements HandlerInterceptor {
 
-    private static final Logger log = LoggerFactory.getLogger(RequestInterceptor.class);
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     protected static final String REQ_RATE_LIMITER_TOKENS = "REQ_RATE_LIMITER_{%s}_TOKENS";
     protected static final String REQ_RATE_LIMITER_TIMESTAMP = "REQ_RATE_LIMITER_{%s}_TIMESTAMP";
@@ -58,10 +58,14 @@ public class RequestInterceptor implements HandlerInterceptor {
 
         // 根据token获取用户id
         String token = request.getHeader(Constant.TOKEN_HEAD);
-        if (token != null && token.length() > 0 && redissonUtils != null) {
-            String userId = this.redissonUtils.get(token, StringCodec.INSTANCE);
-            if (userId != null && userId.length() > 0) {
-                context.setUserId(Long.valueOf(userId));
+        if (token != null && token.length() > 0) {
+            if (this.redissonUtils == null) {
+                log.warn("Unable to get user ID based on token because redissonUtils is null!");
+            } else {
+                String userId = this.redissonUtils.get(token, StringCodec.INSTANCE);
+                if (userId != null && userId.length() > 0) {
+                    context.setUserId(Long.valueOf(userId));
+                }
             }
         }
 
@@ -98,8 +102,8 @@ public class RequestInterceptor implements HandlerInterceptor {
             HandlerMethod method = (HandlerMethod) handler;
             log.info("{} RT:{}ms", method.getMethod().getName(),
                     (System.currentTimeMillis() - RequestContext.getContext().getStartTime()));
-            RequestContext.removeContext();
         }
+        RequestContext.removeContext();
     }
 
     /**
@@ -121,6 +125,7 @@ public class RequestInterceptor implements HandlerInterceptor {
                 // put需要参与签名的参数
                 String queryString = request.getQueryString();
                 if (queryString != null && queryString.length() > 0) {
+                    log.debug("queryString|{}", queryString);
                     RequestUtils.paramsToMap(queryString, signMap);
                 }
             } else if (Constant.POST_METHOD.equals(method)) {
@@ -128,7 +133,7 @@ public class RequestInterceptor implements HandlerInterceptor {
                     RequestWrapper requestWrapper = (RequestWrapper) request;
                     String bodyStr = requestWrapper.getBodyString();
                     // raw（参数放在请求体内）
-                    log.debug("请求体参数|{}", bodyStr);
+                    log.debug("bodyStr|{}", bodyStr);
                     // put参与签名的请求体
                     signMap.put("body", bodyStr);
 
@@ -153,6 +158,7 @@ public class RequestInterceptor implements HandlerInterceptor {
                 String md5 = MD5Utils.getMD5String(signMap, Constant.SIGN_KEY);
                 String sign = request.getHeader(Constant.SIGNATURE_HEAD);
                 if (sign == null || !sign.equals(md5.toUpperCase())) {
+                    log.warn("sign|{}|{}|{}|{}", handlerMethod.getMethod().getName(), signMap, md5, sign);
                     return false;
                 }
             }
@@ -191,7 +197,10 @@ public class RequestInterceptor implements HandlerInterceptor {
      */
     private boolean accessLimit(HandlerMethod handlerMethod, HttpServletRequest request) {
         AccessLimit accessLimit = handlerMethod.getMethodAnnotation(AccessLimit.class);
-        if (accessLimit != null && redissonUtils != null) {
+        if (accessLimit != null) {
+            if (this.redissonUtils == null) {
+                throw new RuntimeException("@AccessLimit Operation not supported");
+            }
             int rate = accessLimit.replenishRate();
             int capacity = accessLimit.burstCapacity();
             int now = (int) (System.currentTimeMillis() / 1000);

@@ -1,6 +1,8 @@
 package com.airing.spring.cloud.base.utils;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Future;
@@ -9,6 +11,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 public class ThreadPoolUtils {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     private static volatile ThreadPoolUtils threadPoolUtils = null;
     private volatile ThreadPoolExecutor executor = null;
     private final Object executorLock = new Object();
@@ -51,7 +56,7 @@ public class ThreadPoolUtils {
         if (executor == null) {
             synchronized (executorLock) {
                 if (executor == null) {
-//                    log.info("corePoolSize: {}, maxPoolSize: {}, queueSize: {}", corePoolSize, maxPoolSize, queueSize);
+                    log.info("corePoolSize: {}, maxPoolSize: {}, queueSize: {}", corePoolSize, maxPoolSize, queueSize);
                     executor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 200, TimeUnit.MILLISECONDS,
                             new ArrayBlockingQueue<>(queueSize),
                             new ThreadFactoryBuilder().setNameFormat("agogopost-%d").build(),
@@ -82,13 +87,13 @@ public class ThreadPoolUtils {
         if (executor == null) {
             initParam();
         }
-//        log.debug("activeCount: {}", executor.getActiveCount());
-//        log.debug("completedTaskCount: {}", executor.getCompletedTaskCount());
-//        log.debug("taskCount: {}", executor.getTaskCount());
-//        log.debug("queueSize: {}", executor.getQueue().size());
+        log.debug("activeCount: {}", executor.getActiveCount());
+        log.debug("completedTaskCount: {}", executor.getCompletedTaskCount());
+        log.debug("taskCount: {}", executor.getTaskCount());
+        log.debug("queueSize: {}", executor.getQueue().size());
         int queueSize = executor.getQueue().size();
         if (queueSize >= 10) {
-//            log.warn("queueSize: {}", queueSize);
+            log.warn("queueSize: {}", queueSize);
         }
     }
 
@@ -101,11 +106,11 @@ public class ThreadPoolUtils {
 
     public void updateWaitingTime(long time) {
         long newTime = WAITING_TIME_UPDATER.addAndGet(this, time);
-//        log.info("new waiting time: {}", newTime);
+        log.info("new waiting time: {}", newTime);
     }
 
     public void updateTotalTime(long time) {
         long newTime = TOTAL_TIME_UPDATER.addAndGet(this, time);
-//        log.info("new total time: {}", newTime);
+        log.info("new total time: {}", newTime);
     }
 }

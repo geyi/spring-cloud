@@ -1,5 +1,8 @@
 package com.airing.spring.cloud.base.cache;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -10,6 +13,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @date 2021年03月30日 16:42
  */
 public abstract class AbstractCache<T> {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     // 指向堆内存内缓存数据的引用变量
     private List<T> list = null;
@@ -41,7 +46,7 @@ public abstract class AbstractCache<T> {
     private void cacheList() {
         List<T> dataList = this.load();
         if (dataList == null) {
-//            log.error("data list is null");
+            log.error("data list is null");
         } else {
             list = dataList;
         }
@@ -54,14 +59,14 @@ public abstract class AbstractCache<T> {
             if (blocking) {
                 synchronized (lock) {
                     if (currentVersion != cacheVersion || currentVersion == -1 || list == null) {
-//                        log.info("blocking reload");
+                        log.info("blocking reload");
                         this.cacheList();
                         version.set(cacheVersion);
                     }
                 }
             } else {
                 if (version.compareAndSet(currentVersion, cacheVersion)) {
-//                    log.info("non blocking reload");
+                    log.info("non blocking reload");
                     this.cacheList();
                 }
             }

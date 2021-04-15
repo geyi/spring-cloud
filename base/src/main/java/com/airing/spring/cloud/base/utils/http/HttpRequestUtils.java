@@ -8,6 +8,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -17,6 +19,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class HttpRequestUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestUtils.class);
+
     private static final HttpClient HTTP_CLIENT = new HttpClient();
     private static final String DEFAULT_CHARSET = "UTF-8";
 
@@ -29,17 +34,17 @@ public class HttpRequestUtils {
             int stateCode = response.getStatusLine().getStatusCode();
             byte[] resultByte = EntityUtils.toByteArray(response.getEntity());
             String resultStr = new String(resultByte, DEFAULT_CHARSET);
-//            log.debug("url:{}, stateCode:{}, response:{}", url, stateCode, resultStr);
+            log.debug("url:{}, stateCode:{}, response:{}", url, stateCode, resultStr);
             return resultStr;
         } catch (Exception e) {
-//            log.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException();
         } finally {
             if (response != null) {
                 try {
                     response.getEntity().getContent().close();
                 } catch (IOException e) {
-//                    log.error(e.getMessage(), e);
+                    log.error(e.getMessage(), e);
                 }
             }
         }
@@ -64,17 +69,17 @@ public class HttpRequestUtils {
             int stateCode = response.getStatusLine().getStatusCode();
             byte[] resultByte = EntityUtils.toByteArray(response.getEntity());
             String resultStr = new String(resultByte, DEFAULT_CHARSET);
-//            log.debug("url:{}, jsonParams:{}, stateCode:{}, response:{}", url, jsonParams, stateCode, resultStr);
+            log.debug("url:{}, jsonParams:{}, stateCode:{}, response:{}", url, jsonParams, stateCode, resultStr);
             return resultStr;
         } catch (Exception e) {
-//            log.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException();
         } finally {
             if (response != null) {
                 try {
                     response.getEntity().getContent().close();
                 } catch (IOException e) {
-//                    log.error(e.getMessage(), e);
+                    log.error(e.getMessage(), e);
                 }
             }
         }
@@ -101,19 +106,19 @@ public class HttpRequestUtils {
             int stateCode = response.getStatusLine().getStatusCode();
             byte[] resultByte = EntityUtils.toByteArray(response.getEntity());
             String resultStr = new String(resultByte, DEFAULT_CHARSET);
-//            log.debug("url:{}, headerParams:{}, params:{}, stateCode:{}, response:{}", url, headerParams, params,
-//                    stateCode,
-//                    resultStr);
+            log.debug("url:{}, headerParams:{}, params:{}, stateCode:{}, response:{}", url, headerParams, params,
+                    stateCode,
+                    resultStr);
             return resultStr;
         } catch (Exception e) {
-//            log.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException();
         } finally {
             if (response != null) {
                 try {
                     response.getEntity().getContent().close();
                 } catch (IOException e) {
-//                    log.error(e.getMessage(), e);
+                    log.error(e.getMessage(), e);
                 }
             }
         }
