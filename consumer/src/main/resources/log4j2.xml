@@ -3,8 +3,8 @@
     <Properties>
         <Property name="app_id">consumer</Property>
         <Property name="log_path">logs</Property>
-        <Property name="pattern">${app_id}-%d{yyyy-MM-dd
-            HH:mm:ss,SSS}[%X{traceId}]|%-5level|%t|%c{5.}.%M:%L|%replace{%msg}{'\s'}{' '}%n
+        <Property name="pattern">
+            ${app_id}-%d{yyyy-MM-dd HH:mm:ss,SSS}[%X{traceId}]|%-5level|%t|%c{5.}.%M:%L|%replace{%msg}{'\s'}{' '}%n
         </Property>
     </Properties>
 
@@ -36,7 +36,13 @@
                 <TimeBasedTriggeringPolicy interval="24" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="2GB"/>
             </Policies>
-            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!--<ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>-->
+            <Filters>
+                <!-- 不匹配error及以上，error以下交个下一个filter处理 -->
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <!-- 匹配warn及以上，不匹配warn以下的级别 -->
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
         </RollingFile>
 
         <RollingFile name="info_file" fileName="${log_path}/info_${app_id}.log"
