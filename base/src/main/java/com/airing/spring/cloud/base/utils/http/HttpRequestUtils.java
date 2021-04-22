@@ -42,7 +42,7 @@ public class HttpRequestUtils {
         } finally {
             if (response != null) {
                 try {
-                    response.getEntity().getContent().close();
+                    response.close();
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                 }
@@ -77,7 +77,7 @@ public class HttpRequestUtils {
         } finally {
             if (response != null) {
                 try {
-                    response.getEntity().getContent().close();
+                    response.close();
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                 }
@@ -116,7 +116,7 @@ public class HttpRequestUtils {
         } finally {
             if (response != null) {
                 try {
-                    response.getEntity().getContent().close();
+                    response.close();
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                 }

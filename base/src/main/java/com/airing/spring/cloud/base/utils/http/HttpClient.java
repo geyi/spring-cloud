@@ -17,8 +17,8 @@ import org.apache.http.protocol.HTTP;
 import java.util.concurrent.TimeUnit;
 
 public class HttpClient {
-	private static final PoolingHttpClientConnectionManager CONN_MRG = new PoolingHttpClientConnectionManager();
-	private static final ConnectionMonitorThread CONNECTION_MONITOR_THREAD = new ConnectionMonitorThread(CONN_MRG);
+	private static final PoolingHttpClientConnectionManager CONN_MGR = new PoolingHttpClientConnectionManager();
+	private static final ConnectionMonitorThread CONNECTION_MONITOR_THREAD = new ConnectionMonitorThread(CONN_MGR);
 	private static final ConnectionKeepAliveStrategy KEEP_ALIVE_STRATEGY = (response, context) -> {
 		HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
 		while (it.hasNext()) {
@@ -36,7 +36,7 @@ public class HttpClient {
 
 		return 30000;
 	};
-	private static final HttpClientBuilder builder = HttpClients.custom();
+	private static final HttpClientBuilder BUILDER = HttpClients.custom();
 
 	private int maxThreadSize;
 	private int maxRouteSize;
@@ -59,20 +59,20 @@ public class HttpClient {
 	}
 
 	private void init() {
-		CONN_MRG.setMaxTotal(maxThreadSize);
-		CONN_MRG.setDefaultMaxPerRoute(maxRouteSize);
+		CONN_MGR.setMaxTotal(maxThreadSize);
+		CONN_MGR.setDefaultMaxPerRoute(maxRouteSize);
 
 		if (!CONNECTION_MONITOR_THREAD.isAlive()) {
 			CONNECTION_MONITOR_THREAD.start();
 		}
 
-		builder.setConnectionManager(CONN_MRG);
-		builder.setKeepAliveStrategy(KEEP_ALIVE_STRATEGY);
+		BUILDER.setConnectionManager(CONN_MGR);
+		BUILDER.setKeepAliveStrategy(KEEP_ALIVE_STRATEGY);
 		if (requestInterceptor != null) {
-			builder.addInterceptorFirst(requestInterceptor);
+			BUILDER.addInterceptorFirst(requestInterceptor);
 		}
 		if (responseInterceptor != null) {
-			builder.addInterceptorLast(responseInterceptor);
+			BUILDER.addInterceptorLast(responseInterceptor);
 		}
 	}
 
@@ -87,11 +87,11 @@ public class HttpClient {
 	public CloseableHttpClient getHttpClient(int requestTimeout, int socketTimeout, int connectTimeout) {
 		RequestConfig requestConfig = RequestConfig.custom()
 				.setConnectionRequestTimeout(requestTimeout)
-				.setSocketTimeout(socketTimeout)
 				.setConnectTimeout(connectTimeout)
+				.setSocketTimeout(socketTimeout)
 				.build();
-		builder.setDefaultRequestConfig(requestConfig);
-		return builder.build();
+		BUILDER.setDefaultRequestConfig(requestConfig);
+		return BUILDER.build();
 	}
 
 	static class ConnectionMonitorThread extends Thread {
@@ -129,8 +129,7 @@ public class HttpClient {
 
 	}
 
-	public void setResponseInterceptor(
-			HttpResponseInterceptor responseInterceptor) {
+	public void setResponseInterceptor(HttpResponseInterceptor responseInterceptor) {
 		this.responseInterceptor = responseInterceptor;
 	}
 
