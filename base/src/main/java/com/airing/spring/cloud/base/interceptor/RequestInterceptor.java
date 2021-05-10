@@ -225,7 +225,7 @@ public class RequestInterceptor implements HandlerInterceptor {
             }
             log.debug("accessLimit|{}|{}|{}|{}|{}", rate, capacity, now, lastTokens, lastRefreshed);
             /*try {
-                // 睡眠之后存在并发问题
+                // 睡眠之后存在线程安全问题
                 TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();

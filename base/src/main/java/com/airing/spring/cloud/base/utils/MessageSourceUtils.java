@@ -11,11 +11,11 @@ public class MessageSourceUtils {
     private MessageSource messageSource;
 
     public String getByKey(String key, String[] args) {
-        return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
+        return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
     public String getByKey(String key, String[] args, String defaultMessage) {
-        return messageSource.getMessage(key, null, defaultMessage, LocaleContextHolder.getLocale());
+        return messageSource.getMessage(key, args, defaultMessage, LocaleContextHolder.getLocale());
     }
 
 }

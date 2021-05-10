@@ -4,7 +4,7 @@ public class Constant {
     public static final String DEFAULT_CHARSET = "utf-8";
     public static final String DEFAULT_LANG = "en_US";
     public static final String LANG_SPLIT = "_";
-    public static final String SIGN_KEY = "KUAIDI100agogopost";
+    public static final String SIGN_KEY = "friday";
 
     //---------------------------------------------------------------------
     // 自定义请求头
