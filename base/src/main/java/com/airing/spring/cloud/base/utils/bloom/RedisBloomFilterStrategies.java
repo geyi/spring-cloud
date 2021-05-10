@@ -14,9 +14,8 @@
 
 package com.airing.spring.cloud.base.utils.bloom;
 
-import com.agogopost.intl.base.Constant;
-import com.agogopost.intl.base.utils.RedissonUtils;
-import com.agogopost.intl.base.utils.SpringBeanUtils;
+import com.airing.spring.cloud.base.utils.RedissonUtils;
+import com.airing.spring.cloud.base.utils.SpringBeanUtils;
 import com.google.common.hash.Funnel;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.LongAddable;
