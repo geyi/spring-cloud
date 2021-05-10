@@ -2,6 +2,7 @@ package com.airing.spring.cloud.base.utils;
 
 import org.redisson.Redisson;
 import org.redisson.api.RAtomicLong;
+import org.redisson.api.RBitSet;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RSet;
@@ -182,5 +183,15 @@ public class RedissonUtils {
     public boolean isExists(String key) {
         RBucket rb = redissonClient.getBucket(key);
         return rb.isExists();
+    }
+
+    public boolean bitSet(String key, long bitIndex) {
+        RBitSet bitSet = redissonClient.getBitSet(key);
+        return bitSet.set(bitIndex);
+    }
+
+    public boolean bitGet(String key, long bitIndex) {
+        RBitSet bitSet = redissonClient.getBitSet(key);
+        return bitSet.get(bitIndex);
     }
 }
