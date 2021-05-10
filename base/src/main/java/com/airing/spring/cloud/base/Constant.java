@@ -23,4 +23,7 @@ public class Constant {
 
     public static final String GET_METHOD = "GET";
     public static final String POST_METHOD = "POST";
+
+
+    public static final String DEFAULT_BLOOM_FILTER_NAME = "DEFAULT_BLOOM_FILTER_NAME";
 }

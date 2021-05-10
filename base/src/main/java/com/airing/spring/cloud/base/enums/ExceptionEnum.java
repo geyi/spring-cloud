@@ -8,6 +8,7 @@ package com.airing.spring.cloud.base.enums;
  */
 public enum ExceptionEnum {
     SYS_ERROR(5000, "sys.error", "Error! Please contact customer service."),
+    NOT_SUPPORT_ERROR(5002, "not.support.error", "不支持的操作{}"),
 
     PARAM_ERROR(4000, "param.error", "parameter {0} is error!"),
     SIGN_ERROR(4001, "sign.error", "params sign error!"),
