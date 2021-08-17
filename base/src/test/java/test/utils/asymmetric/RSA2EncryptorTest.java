@@ -1,0 +1,19 @@
+package test.utils.asymmetric;
+
+import com.airing.spring.cloud.base.utils.asymmetric.RSA2Encryptor;
+import org.junit.Test;
+
+public class RSA2EncryptorTest {
+    private String text = "a=1&b=2&c=3";
+
+    @Test
+    public void test() {
+        String privateKey =
+                "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC8wXc7pjDjh5acp7tFIutV9GCQEBatLtUfbkICBsVgGMw7CJ3fdRZ2YaHmiu9CpHayHSLIUP0cRV4xRyTTqxpGMZ1VvvTI51VcIULhhr39zxu0kDyyO29YPio5SymbGe7qLQiVihRNtpjkXnxs1M2AddU43RRpNTRHQ6fHfVWgJ/u272nDtKZCtPuXK5IzL6TilG5ckCUMbh3o0sHHySD0g8k393GVqMsRLOIkXAug5/+K2H3iB4UCyGLhX0lGyfWcjLGcTKcT0vpDa1zFKTjJ7uiz8rM0D8H07mPBk6PQz/njJJOeb5Fh7EvrBRjUv59zkNjzYjg3K7xGkzNsiijLAgMBAAECggEAT+yDdihqrw0sguyq6R1eFKlDcfy9/VrFN2fSX1VKoeQeJikB4CqN9lZk3V+a69cDw2t+3N8eLahZt/ft6gqbN3muqy4OLDt382jKDwCk1iGqE4y3hqiP/wdjjZr75QbYGSQ0bE1pR3a3yosPmG2LDofWXxuNlvbGSh6lnly9svA/l7qpD7Di8eiNvek4GMfExY6F7fAv+eRj8xZfT/sp4DpqfHMeZqOMh2pqEBxiOhirL7c4RbGpTjrKw118NOiFsIZiFeA9z81093q+lz0KFgO2OIa5KlueG4uYASQVie6fYCoZbgXvEQlhM38AOd2GCiDhdqSBhqMTQ+4qv5tQEQKBgQD418W07tZmWxZtTN6w9/stluiPxrLuo9ng6/3kFONRhGpv0qCU3yGW0Wwnq+uknDZI9avT366ExXojv64zakKkdNu8X6oXBeZ/eiTPBlPIXw46kqFbg22WIA8ibsjSqR6sYbCTpDNuxXBzRinGg3rGuXm0Qo/6zHvAyqnis/+6nwKBgQDCL0W+Z3BjyJcfnsHypgQOX8U5olXl0PMq0ZlgyTflzjGRbADpgFurMLBGgSl5y+U7xeFB2RMZ9d1W0g6rhyIXoqT1o++iFH+1BpIW1Rtap5mWo/mhxuoWNx+dT4Hbj5qiL5yc8+mKenT/u35aMBQxkazozhDEVZfQK+pcWMOOVQKBgDIW/O0WxoGEBFesCYeF40GiBt4qGQqAYPMtjcXDjp5yERrBQyG0aIZ7UVILATv5VdQJ37Seafq/5X4cr2waD6AbBcA9YXeQ8HzokVA67dJ/j9WqfmB1bDGz8lf0BOiislHwuCKAAvphM+mAThhvjt9BpoXqgCDz2FVOdjP0F53xAoGADMzQ7BwlbG5sh8kPP89xtQDbH1F0GBIN9WSbl6Wr6ZoN6mgUJ1Auuroa5IrfEQg/tBD3KEAG4k8yp+Zw0R23QZeXCBomUajIQkaMmrSxeOhTV3q3mdJi29QGYXg8NxzgNJCu4imx2073J2RUj91bd2kC3NW4hTifKTm72RqAyYECgYBPz2I+bvjb+jL/oTYg6iIpNKYKOJtbj6OQgGZOWNy5x+VGJN6PzcmGziFgV2qP5gW2K8kxBD/Kttlscgei0KF3KiTxFPthllCnQz/G2WkeHvwmzP/kAACu5DhaHjk6OQ4Qec+RKjQG0g63NoeX6bB0YGQ7kA0PIw6dnOzVq9Tmxw==";
+        String publicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvMF3O6Yw44eWnKe7RSLrVfRgkBAWrS7VH25CAgbFYBjMOwid33UWdmGh5orvQqR2sh0iyFD9HEVeMUck06saRjGdVb70yOdVXCFC4Ya9/c8btJA8sjtvWD4qOUspmxnu6i0IlYoUTbaY5F58bNTNgHXVON0UaTU0R0Onx31VoCf7tu9pw7SmQrT7lyuSMy+k4pRuXJAlDG4d6NLBx8kg9IPJN/dxlajLESziJFwLoOf/ith94geFAshi4V9JRsn1nIyxnEynE9L6Q2tcxSk4ye7os/KzNA/B9O5jwZOj0M/54ySTnm+RYexL6wUY1L+fc5DY82I4Nyu8RpMzbIooywIDAQAB";
+        RSA2Encryptor rsa2Encryptor = new RSA2Encryptor();
+        String encrypt = rsa2Encryptor.encrypt(text, "UTF-8", publicKey);
+        System.out.println(encrypt);
+        System.out.println(rsa2Encryptor.decrypt(encrypt, "utf-8", privateKey));
+    }
+}
