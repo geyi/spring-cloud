@@ -65,3 +65,6 @@ hystrix:
     
 logging:
   config: classpath:log4j2.xml
+
+time:
+  pattern: yyyy-MM-dd HH:mm:ss.S
