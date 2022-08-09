@@ -9,7 +9,7 @@ import org.springframework.web.server.ServerWebExchange;
 public class RequestUtils {
 
     /**
-     * 参数刑如：k1=v2&k2=v2
+     * 参数形如：k1=v2&k2=v2
      *
      * @param params
      * @return
@@ -21,7 +21,7 @@ public class RequestUtils {
     }
 
     /**
-     * 参数刑如：k1=v2&k2=v2
+     * 参数形如：k1=v2&k2=v2
      *
      * @param str
      * @param result
