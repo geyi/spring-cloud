@@ -58,6 +58,7 @@ public abstract class AbstractCache<T> {
         if (currentVersion != cacheVersion || currentVersion == -1 || list == null) {
             if (blocking) {
                 synchronized (lock) {
+                    currentVersion = version.get();
                     if (currentVersion != cacheVersion || currentVersion == -1 || list == null) {
                         log.info("blocking reload");
                         this.cacheList();
