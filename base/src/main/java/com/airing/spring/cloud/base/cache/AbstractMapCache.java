@@ -46,7 +46,7 @@ public abstract class AbstractMapCache<K, V> {
 
     public AbstractMapCache(boolean keyVersionCtrl) {
         this.keyVersionCtrl = keyVersionCtrl;
-        this.versionCtrl = new KeyVersionCtrl();
+        this.versionCtrl = keyVersionCtrl ? new KeyVersionCtrl() : new DefVersionCtrl();
     }
 
     /**
