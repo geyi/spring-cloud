@@ -1,4 +1,4 @@
-package com.airing.spring.cloud.sdk.entity;
+package com.airing.spring.cloud.facade.entity;
 
 public class User {
     private Long id;

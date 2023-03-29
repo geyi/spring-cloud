@@ -1,6 +1,6 @@
-package com.airing.spring.cloud.sdk.api;
+package com.airing.spring.cloud.facade.api;
 
-import com.airing.spring.cloud.sdk.entity.User;
+import com.airing.spring.cloud.facade.entity.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

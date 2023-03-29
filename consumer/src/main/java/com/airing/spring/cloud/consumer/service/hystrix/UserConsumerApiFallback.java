@@ -1,8 +1,7 @@
 package com.airing.spring.cloud.consumer.service.hystrix;
 
 import com.airing.spring.cloud.consumer.facade.UserConsumerApi;
-import com.airing.spring.cloud.sdk.entity.User;
-import org.springframework.stereotype.Component;
+import com.airing.spring.cloud.facade.entity.User;
 
 // @Component
 public class UserConsumerApiFallback implements UserConsumerApi {

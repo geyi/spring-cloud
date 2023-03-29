@@ -8,7 +8,7 @@
         <module>eureka-server02</module>
         <module>provider</module>
         <module>consumer</module>
-        <module>sdk</module>
+        <module>facade</module>
         <module>zuul</module>
         <module>config</module>
         <module>nacos</module>

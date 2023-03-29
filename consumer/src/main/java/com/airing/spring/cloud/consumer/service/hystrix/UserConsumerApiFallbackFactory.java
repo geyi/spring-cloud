@@ -1,7 +1,7 @@
 package com.airing.spring.cloud.consumer.service.hystrix;
 
 import com.airing.spring.cloud.consumer.facade.UserConsumerApi;
-import com.airing.spring.cloud.sdk.entity.User;
+import com.airing.spring.cloud.facade.entity.User;
 import feign.FeignException;
 import feign.hystrix.FallbackFactory;
 import org.springframework.stereotype.Component;

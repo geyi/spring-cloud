@@ -1,7 +1,7 @@
 package com.airing.spring.cloud.consumer.controller;
 
 import com.airing.spring.cloud.consumer.service.RestTemplateService;
-import com.airing.spring.cloud.sdk.entity.User;
+import com.airing.spring.cloud.facade.entity.User;
 import java.io.IOException;
 import java.net.URI;
 import javax.servlet.http.HttpServletResponse;

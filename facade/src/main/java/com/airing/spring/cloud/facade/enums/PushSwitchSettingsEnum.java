@@ -1,4 +1,4 @@
-package com.airing.spring.cloud.sdk.enums;
+package com.airing.spring.cloud.facade.enums;
 
 import java.util.HashMap;
 import java.util.Map;

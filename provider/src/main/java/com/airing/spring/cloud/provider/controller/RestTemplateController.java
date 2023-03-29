@@ -1,6 +1,6 @@
 package com.airing.spring.cloud.provider.controller;
 
-import com.airing.spring.cloud.sdk.entity.User;
+import com.airing.spring.cloud.facade.entity.User;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.servlet.http.HttpServletResponse;

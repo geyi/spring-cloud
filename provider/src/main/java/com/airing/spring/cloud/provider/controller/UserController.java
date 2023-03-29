@@ -1,7 +1,7 @@
 package com.airing.spring.cloud.provider.controller;
 
-import com.airing.spring.cloud.sdk.api.UserApi;
-import com.airing.spring.cloud.sdk.entity.User;
+import com.airing.spring.cloud.facade.api.UserApi;
+import com.airing.spring.cloud.facade.entity.User;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RestController;
