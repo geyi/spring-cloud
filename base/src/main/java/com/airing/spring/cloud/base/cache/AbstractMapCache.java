@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 缓存模板
+ * 实现一个基于Map的缓存抽象类，同时支持通过版本控制实现缓存数据的自动更新
  *
  * @author GEYI
  * @date 2021年03月30日 16:42
