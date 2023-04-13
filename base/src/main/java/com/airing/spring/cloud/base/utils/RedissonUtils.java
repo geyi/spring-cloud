@@ -5,6 +5,7 @@ import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBitSet;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
+import org.redisson.api.RMap;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.Codec;
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -131,10 +133,11 @@ public class RedissonUtils {
         return ret;
     }
 
-    public void incr(String key, long value, long expireTime, TimeUnit timeUnit) {
+    public long incr(String key, long value, long expireTime, TimeUnit timeUnit) {
         RAtomicLong rAtomicLong = redissonClient.getAtomicLong(key);
-        rAtomicLong.set(value);
+        long ret = rAtomicLong.addAndGet(value);
         rAtomicLong.expire(expireTime, timeUnit);
+        return ret;
     }
 
     public long addAndGet(String key, long value, long expireTime, TimeUnit timeUnit) {
@@ -193,5 +196,44 @@ public class RedissonUtils {
     public boolean bitGet(String key, long bitIndex) {
         RBitSet bitSet = redissonClient.getBitSet(key);
         return bitSet.get(bitIndex);
+    }
+
+    public Map<String, Object> hGetAll(String key) {
+        RMap<String, Object> rMap = redissonClient.getMap(key);
+        return rMap.readAllMap();
+    }
+
+    public <K, V> V hGet(String key, K k) {
+        RMap<K, V> rMap = redissonClient.getMap(key);
+        return rMap.get(k);
+    }
+
+    public <K, V> void hSet(String key, K k, V v, long expireTime, TimeUnit timeUnit) {
+        RMap<Object, Object> rMap = redissonClient.getMap(key);
+        rMap.put(k, v);
+        rMap.expire(expireTime, timeUnit);
+    }
+
+    public long hIncrBy(String key, String field, long delta, long expireTime, TimeUnit timeUnit) {
+        RMap<Object, Object> rMap = redissonClient.getMap(key);
+        long ret = (long) rMap.addAndGet(field, delta);
+        rMap.expire(expireTime, timeUnit);
+        return ret;
+    }
+
+    public long hIncrBy(String key, String field, long delta) {
+        RMap<Object, Object> rMap = redissonClient.getMap(key);
+        return (long) rMap.addAndGet(field, delta);
+    }
+
+    public void hMSet(String key, Map<String, Object> map) {
+        RMap<Object, Object> rMap = redissonClient.getMap(key);
+        rMap.putAll(map);
+    }
+
+    public void hMSet(String key, Map<String, Object> map, long expireTime, TimeUnit timeUnit) {
+        RMap<Object, Object> rMap = redissonClient.getMap(key);
+        rMap.putAll(map);
+        rMap.expire(expireTime, timeUnit);
     }
 }

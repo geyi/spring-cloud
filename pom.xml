@@ -45,7 +45,7 @@
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
-                <version>3.12.5</version>
+                <version>3.16.8</version>
             </dependency>
             <!-- fastjson -->
             <dependency>
@@ -76,6 +76,12 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>29.1-jre</version>
+            </dependency>
+            <!-- lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.10</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
