@@ -1,7 +1,7 @@
 spring:
   redis:
     redisson:
-      file: classpath:redisson-cluster.yaml
+      file: classpath:redisson-single.yaml
 logging:
   level:
     com.airing: debug

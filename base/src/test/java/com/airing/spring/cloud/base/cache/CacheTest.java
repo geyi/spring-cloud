@@ -75,7 +75,10 @@ public class CacheTest extends ApplicationTests {
         redissonUtils.del(key.uniqueKey());
         redissonUtils.del(key.uniqueKey() + AbstractRedisCache.COUNT_SUFFIX);
 
-        // 只会输出一次from DB
+        /**
+         * 10个线程同时获取数据
+         * 只会输出一次from DB
+         */
         int count = 10;
         Thread[] threads = new Thread[count];
         for (int i = 0; i < count; i++) {
@@ -96,7 +99,9 @@ public class CacheTest extends ApplicationTests {
             thread.join();
         }
 
+        // 从Redis中获取，访问次数达到100次，进入JVM缓存
         priceDetailCache.getValue(key);
+        // 从JVM缓存中获取
         priceDetailCache.getValue(key);
     }
 
@@ -117,7 +122,10 @@ public class CacheTest extends ApplicationTests {
         redissonUtils.del(key.uniqueKey());
         redissonUtils.del(key.uniqueKey() + AbstractRedisCache.COUNT_SUFFIX);
 
-        // 只会输出一次from DB
+        /**
+         * 100个线程同时获取数据
+         * 只会输出一次from DB
+         */
         int count = 100;
         Thread[] threads = new Thread[count];
         for (int i = 0; i < count; i++) {
@@ -136,9 +144,13 @@ public class CacheTest extends ApplicationTests {
             thread.join();
         }
 
+        // 改变版本号
         priceDetailCache.changeVersion();
 
-        // 只会输出一次from DB
+        /**
+         * 100个线程同时获取数据
+         * 只会输出一次from DB
+         */
         threads = new Thread[count];
         for (int i = 0; i < count; i++) {
             threads[i] = new Thread(() -> {
@@ -156,7 +168,9 @@ public class CacheTest extends ApplicationTests {
             thread.join();
         }
 
+        // 从Redis中获取，访问次数达到100次，进入JVM缓存
         priceDetailCache.getValue(key);
+        // 从JVM缓存中获取
         priceDetailCache.getValue(key);
     }
 
