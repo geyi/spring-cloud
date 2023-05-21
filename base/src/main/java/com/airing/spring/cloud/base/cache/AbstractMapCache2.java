@@ -1,5 +1,8 @@
 package com.airing.spring.cloud.base.cache;
 
+import com.airing.spring.cloud.base.cache.demo.PriceCacheKey;
+import com.airing.spring.cloud.base.cache.demo.PriceCacheValue;
+import com.airing.spring.cloud.base.utils.SpringBeanUtils;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -8,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
+import org.checkerframework.checker.units.qual.K;
 
 /**
  * 缓存模板
@@ -21,15 +25,7 @@ public abstract class AbstractMapCache2<K, V> {
     private static final int HASH_BITS = 0x7fffffff; // usable bits of normal node hash
 
     // 指向堆内存内缓存数据的引用变量
-    private LoadingCache<K, V> map = CacheBuilder.newBuilder()
-            .maximumSize(20000)
-            .recordStats()
-            .build(new CacheLoader<K, V>() {
-                @Override
-                public V load(K key) {
-                    return AbstractMapCache2.this.load(key);
-                }
-            });
+    private LoadingCache<K, V> cache;
     // 堆内存内缓存数据的版本
     private AtomicLong version = new AtomicLong(-1);
     /*
@@ -54,22 +50,18 @@ public abstract class AbstractMapCache2<K, V> {
 
     private VersionCtrl<K, V> versionCtrl;
 
-    public LoadingCache<K, V> getMap() {
-        return map;
+    public LoadingCache<K, V> getCache() {
+        return cache;
     }
 
-    public AbstractMapCache2() {
-        this.versionCtrl = new KeyVersionCtrl();
+    public AbstractMapCache2(LoadingCache<K, V> cache) {
+        this(false, cache);
     }
 
-    public AbstractMapCache2(LoadingCache<K, V> map) {
-        this(false, map);
-    }
-
-    public AbstractMapCache2(boolean keyVersionCtrl, LoadingCache<K, V> map) {
+    public AbstractMapCache2(boolean keyVersionCtrl, LoadingCache<K, V> cache) {
         this.keyVersionCtrl = keyVersionCtrl;
         this.versionCtrl = keyVersionCtrl ? new KeyVersionCtrl() : new DefVersionCtrl();
-        this.map = map;
+        this.cache = cache;
     }
 
     /**
@@ -105,9 +97,9 @@ public abstract class AbstractMapCache2<K, V> {
                     currentVersion = keyVersion.getOrDefault(key, -1L);
                     if (currentVersion != cacheVersion) {
                         keyVersion.put(key, cacheVersion);
-                        map.invalidate(key);
+                        cache.invalidate(key);
                         try {
-                            return map.get(key);
+                            return cache.get(key);
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         }
@@ -116,7 +108,7 @@ public abstract class AbstractMapCache2<K, V> {
                 }
             }
             try {
-                return map.get(key);
+                return cache.get(key);
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
@@ -134,9 +126,9 @@ public abstract class AbstractMapCache2<K, V> {
                     currentVersion = version.get();
                     if (currentVersion != cacheVersion) {
                         version.compareAndSet(currentVersion, cacheVersion);
-                        map.invalidateAll();
+                        cache.invalidateAll();
                         try {
-                            return map.get(key);
+                            return cache.get(key);
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         }
@@ -145,7 +137,7 @@ public abstract class AbstractMapCache2<K, V> {
                 }
             }
             try {
-                return map.get(key);
+                return cache.get(key);
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }

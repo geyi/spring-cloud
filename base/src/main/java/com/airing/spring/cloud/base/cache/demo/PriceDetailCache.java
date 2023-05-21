@@ -16,7 +16,7 @@ public class PriceDetailCache extends AbstractRedisCache<PriceCacheKey, PriceCac
     }
 
     public PriceDetailCache(int threshold, RedissonUtils redissonUtils, long priceMetaId) {
-        super(threshold);
+        super(threshold, 1000);
         this.redissonUtils = redissonUtils;
         this.priceMetaId = priceMetaId;
     }

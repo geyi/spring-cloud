@@ -1,5 +1,9 @@
 package com.airing.spring.cloud.base.cache;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import java.util.concurrent.ExecutionException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -17,12 +21,14 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class AbstractRedisCache<K extends RedisKey, V> {
 
     public static final String COUNT_SUFFIX = "_COUNT";
+    public static final Object EMPTY = new Object();
     private static final int HASH_BITS = 0x7fffffff; // usable bits of normal node hash
 
     // 访问量阈值，默认100
     private int threshold;
     // 指向堆内存内缓存数据的引用变量
-    private Map<K, V> map = new ConcurrentHashMap<>();
+    // private Map<K, V> cache = new ConcurrentHashMap<>();
+    private LoadingCache<K, V> cache;
     // 堆内存内缓存数据的版本
     private AtomicLong version = new AtomicLong(-1);
     // 锁
@@ -31,14 +37,23 @@ public abstract class AbstractRedisCache<K extends RedisKey, V> {
     private int lockSlotCount = lockCount - 1;
 
     public AbstractRedisCache() {
-        this(100);
+        this(100, 1000);
     }
 
-    public AbstractRedisCache(int threshold) {
+    public AbstractRedisCache(int threshold, int maximumSize) {
         this.threshold = threshold;
         for (int i = 0; i < lockCount; i++) {
             locks[i] = new ReentrantLock();
         }
+
+        cache = CacheBuilder.newBuilder()
+                .maximumSize(maximumSize)
+                .build(new CacheLoader<K, V>() {
+                    @Override
+                    public V load(K key) {
+                        return (V) AbstractRedisCache.EMPTY;
+                    }
+                });
     }
 
     /**
@@ -122,7 +137,7 @@ public abstract class AbstractRedisCache<K extends RedisKey, V> {
         String k = key.getKeyWithSuffix(COUNT_SUFFIX);
         long accessCount = incr(k, 1L);
         if (accessCount >= threshold) {
-            map.putIfAbsent(key, v);
+            cache.put(key, v);
         }
         return accessCount;
     }
@@ -153,8 +168,13 @@ public abstract class AbstractRedisCache<K extends RedisKey, V> {
             }
         }
 
-        V v = map.get(key);
-        if (v != null) {
+        V v;
+        try {
+            v = cache.get(key);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        if (v != null && v != EMPTY) {
             if (log.isDebugEnabled()) {
                 log.debug("from JVM cache");
             }
@@ -188,12 +208,12 @@ public abstract class AbstractRedisCache<K extends RedisKey, V> {
     }
 
     public void remove(K key) {
-        map.remove(key);
+        cache.invalidate(key);
         del(key.uniqueKey());
     }
 
     public void clearMap() {
-        map.clear();
+        cache.invalidateAll();
     }
 
     static final int spread(int h) {

@@ -14,7 +14,7 @@ public class DefaultPriceCache extends AbstractRedisCache<DefaultPriceCacheKey, 
     private RedissonUtils redissonUtils;
 
     public DefaultPriceCache() {
-        super(10);
+        super(10, 100);
     }
 
     @Override

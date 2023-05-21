@@ -4,7 +4,6 @@ import com.airing.spring.cloud.base.ApplicationTests;
 import com.airing.spring.cloud.base.cache.demo.DefaultPriceCache;
 import com.airing.spring.cloud.base.cache.demo.DefaultPriceCacheKey;
 import com.airing.spring.cloud.base.cache.demo.PriceCacheKey;
-import com.airing.spring.cloud.base.cache.demo.PriceCacheValue;
 import com.airing.spring.cloud.base.cache.demo.PriceDetailCache;
 import com.airing.spring.cloud.base.cache.demo.PriceL1Cache;
 import com.airing.spring.cloud.base.utils.RedissonUtils;
@@ -14,11 +13,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.concurrent.TimeUnit;
-
 @RunWith(SpringRunner.class)
 @Slf4j
-public class CacheTest extends ApplicationTests {
+public class RedisCacheTest extends ApplicationTests {
     @Autowired
     private RedissonUtils redissonUtils;
     @Autowired
@@ -187,7 +184,7 @@ public class CacheTest extends ApplicationTests {
         log.info(priceL1Cache.get(1L).getValue(key).toString());
     }
 
-//    @Test
+    @Test
     public void defaultPriceCacheTest() {
         DefaultPriceCacheKey key = new DefaultPriceCacheKey();
         key.setChannel("PERSONAL");
