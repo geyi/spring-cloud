@@ -3,6 +3,7 @@ package com.airing.spring.cloud.base.interceptor;
 import com.airing.spring.cloud.base.Constant;
 import com.airing.spring.cloud.base.annotation.AccessLimit;
 import com.airing.spring.cloud.base.annotation.Auth;
+import com.airing.spring.cloud.base.annotation.Csrf;
 import com.airing.spring.cloud.base.annotation.Sign;
 import com.airing.spring.cloud.base.config.KeyResolver;
 import com.airing.spring.cloud.base.entity.RequestContext;
@@ -247,6 +248,29 @@ public class RequestInterceptor implements HandlerInterceptor {
                 this.redissonUtils.set(timestampKey, String.valueOf(now), ttl, TimeUnit.SECONDS);
             }
             return allowed;
+        }
+        return true;
+    }
+
+    /**
+     * CSRF TOKEN校验
+     *
+     * @param handlerMethod
+     * @param request
+     * @return boolean
+     * @author GEYI
+     * @date 2021年04月28日 17:31
+     */
+    private boolean csrf(HandlerMethod handlerMethod, HttpServletRequest request) {
+        Csrf csrfAnnotation = handlerMethod.getMethodAnnotation(Csrf.class);
+        if (csrfAnnotation != null) {
+            String csrfHeadName = csrfAnnotation.csrfHeadName();
+            String csrfToken = request.getHeader(csrfHeadName);
+            if (csrfToken == null || csrfToken.length() == 0) {
+                return false;
+            }
+            // 解密校验
+            /*return TokenUtils.parseCsrfToken(csrfToken);*/
         }
         return true;
     }

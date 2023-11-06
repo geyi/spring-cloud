@@ -18,6 +18,7 @@ public class Constant {
     public static final String SIGNATURE_HEAD = "signature";
     public static final String VERSION_HEAD = "version";
     public static final String APP_ID_HEAD = "appid";
+    public static final String CSRF_HEAD = "csrf-token";
 
     public static final String SIGN_HEAD_PREFIX = "x-acs-signature-";
 
