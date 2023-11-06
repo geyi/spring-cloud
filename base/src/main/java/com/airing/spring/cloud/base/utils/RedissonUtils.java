@@ -3,9 +3,12 @@ package com.airing.spring.cloud.base.utils;
 import org.redisson.Redisson;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBitSet;
+import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RBucket;
+import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
+import org.redisson.api.RQueue;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.Codec;
@@ -235,5 +238,16 @@ public class RedissonUtils {
         RMap<Object, Object> rMap = redissonClient.getMap(key);
         rMap.putAll(map);
         rMap.expire(expireTime, timeUnit);
+    }
+
+    public <V> void delayQueueOffer(String key, V element, long delay, TimeUnit timeUnit) {
+        RQueue<V> destinationQueue = redissonClient.getBlockingQueue(key);
+        RDelayedQueue<V> delayedQueue = redissonClient.getDelayedQueue(destinationQueue);
+        delayedQueue.offer(element, delay, timeUnit);
+    }
+
+    public <V> RBlockingQueue<V> getDelayQueue(String key) {
+        RBlockingQueue<V> destinationQueue = redissonClient.getBlockingQueue(key);
+        return destinationQueue;
     }
 }
