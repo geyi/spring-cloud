@@ -5,9 +5,12 @@ import com.airing.spring.cloud.base.annotation.Auth;
 import com.airing.spring.cloud.base.annotation.Sign;
 import com.airing.spring.cloud.base.enums.ExceptionEnum;
 import com.airing.spring.cloud.base.exception.BusinessException;
+import com.airing.spring.cloud.base.utils.RedissonUtils;
 import com.airing.spring.cloud.base.utils.http.HttpRequestUtils;
 import com.google.common.util.concurrent.RateLimiter;
 import com.netflix.discovery.EurekaClient;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.ServiceInstance;
@@ -26,6 +29,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("test")
+@Slf4j
 public class TestController {
 
     // Spring定义的接口
@@ -36,6 +40,8 @@ public class TestController {
     private EurekaClient eurekaClient;
     @Autowired
     private LoadBalancerClient loadBalancerClient;
+    @Autowired
+    private RedissonUtils redissonUtils;
 
     @GetMapping("get/services")
     public Object getServices() {
@@ -71,11 +77,12 @@ public class TestController {
     }
 
     @RequestMapping("test")
-    @Sign
+//    @Sign
     @AccessLimit
     private Object test(/*@RequestBody String body,*/
                         @RequestParam(required = false) String number) {
 //        System.out.println(number);
+        log.info(redissonUtils.get(number, StringCodec.INSTANCE));
         return "success";
     }
 
@@ -97,7 +104,7 @@ public class TestController {
         return "";
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         RateLimiter rateLimiter = RateLimiter.create(3.0);
         while (true) {
             rateLimiter.acquire();
