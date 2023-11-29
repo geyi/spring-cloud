@@ -248,6 +248,7 @@ public class RedissonUtils {
 
     public <V> RBlockingQueue<V> getDelayQueue(String key) {
         RBlockingQueue<V> destinationQueue = redissonClient.getBlockingQueue(key);
+        redissonClient.getDelayedQueue(destinationQueue);
         return destinationQueue;
     }
 }
