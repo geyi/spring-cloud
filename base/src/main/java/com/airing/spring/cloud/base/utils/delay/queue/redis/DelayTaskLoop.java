@@ -23,6 +23,7 @@ public class DelayTaskLoop<T> implements Runnable {
     private long interval;
     // 记录当前队列中task的数量
     private AtomicLong count = new AtomicLong(0);
+    private volatile boolean shutdown = false;
 
     public String getQueueName() {
         return queueName;
@@ -79,8 +80,11 @@ public class DelayTaskLoop<T> implements Runnable {
         RBlockingQueue<T> delayQueue = redissonUtils.getDelayQueue(queueName);
         T task = null;
         while (true) {
+            if (shutdown) {
+                break;
+            }
             try {
-                task = delayQueue.take();
+                task = delayQueue.poll(1000, TimeUnit.MILLISECONDS);
                 if (task == null) {
                     continue;
                 }
@@ -95,6 +99,10 @@ public class DelayTaskLoop<T> implements Runnable {
                 return;
             }
         }
+    }
+
+    public void shutdown() {
+        shutdown = true;
     }
 
     /**

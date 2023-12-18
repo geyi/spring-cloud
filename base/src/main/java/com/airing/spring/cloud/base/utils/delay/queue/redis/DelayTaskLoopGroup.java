@@ -69,4 +69,35 @@ public class DelayTaskLoopGroup<T> {
         }
         log.info("{} health stat: normal {}, exp {}, reboot {}", queueNamePrefix, normal, exp, reboot);
     }
+
+    /**
+     * 关闭组内的所有线程
+     *
+     * @param timeout 等待所有线程关闭的超时时间
+     * @return boolean 在指定的超时时间内如果所有线程都关闭则返回true，否则返回false
+     * @author GEYI
+     * @date 2023年12月18日 14:07
+     */
+    public boolean shutdown(long timeout) {
+        for (Map.Entry<DelayTaskLoop, Thread> es : threadMap.entrySet()) {
+            DelayTaskLoop loop = es.getKey();
+            loop.shutdown();
+        }
+
+        boolean alive = false;
+        long future = System.currentTimeMillis() + timeout;
+        long remaining;
+        do {
+            alive = false;
+            for (Map.Entry<DelayTaskLoop, Thread> es : threadMap.entrySet()) {
+                Thread thread = es.getValue();
+                if (thread.isAlive()) {
+                    alive = true;
+                    break;
+                }
+            }
+            remaining = future - System.currentTimeMillis();
+        } while (alive && remaining > 0);
+        return !alive;
+    }
 }
